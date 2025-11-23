@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" 
+            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" 
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+<section class="page active" id="page-welcome" role="region" aria-label="Welcome section">
+    <div class="page-container">
+        <h1>Welcome to the Resume Builder</h1>
+        <p>Create a professional resume in minutes.</p>
+        <!-- extra span inside button: silly but you see devs do this when they test icons -->
+        <button id="get-started-btn" class="btn" title="Start">Get Started <span aria-hidden="true">→</span></button>
+    </div>
+</section>
+
+<!-- FORM PAGE -->
+<section class="page" id="page-form">
+    <div class="page-container">
+        <h2>Personal Information</h2>
+
+        <!-- Note: kept the form id the same so existing JS can bind to #resume-form -->
+        <form id="resume-form" novalidate>
+            <!-- Grid wrapper: sometimes I over-comment for future-me -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" required autocomplete="name" />
+                    <!-- I sometimes add small helper text, removed for now — felt cluttered -->
+                </div>
+
+                <div class="form-group">
+                    <label for="jobTitle">Job Title (e.g., Senior Web Developer)</label>
+                    <input type="text" id="jobTitle" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required autocomplete="email" />
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" inputmode="tel" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="address">Address (e.g., City, Country)</label>
+                    <input type="text" id="address" />
+                </div>
+            </div>
+
+            <!-- PHOTO UPLOAD: kept same IDs so preview wiring stays valid -->
+            <div class="form-group">
+                <label for="photo-upload">Upload Passport Size Photo</label>
+                <input type="file" id="photo-upload" accept="image/*" aria-describedby="photoHelp" />
+                <small id="photoHelp">Recommended: square image, 300x300px.</small>
+                <!-- display:none inline style left in — quick-and-dirty dev habit -->
+                <img id="photo-preview" src="" alt="Photo Preview" style="display:none; max-width:120px; margin-top:8px;" />
+                <!-- alt note: originally blank src causes broken img; script should set it, else this stays hidden -->
+                <!-- commented out fallback I'd try locally -->
+                <!-- <img src="assets/default-avatar.png" alt="default avatar"> -->
+            </div>
+
+            <div class="form-group">
+                <label for="summary">Professional Summary</label>
+                <textarea id="summary" rows="5" placeholder="A short punchy sentence about you"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="skills">Skills (comma-separated)</label>
+                <input type="text" id="skills" placeholder="e.g., HTML, CSS, JavaScript, React" />
+            </div>
+
+            <!-- WORK EXPERIENCE -->
+            <h3>Work Experience</h3>
+            
+            <div id="work-experience-wrapper">
+                <div id="work-experience-container">
+                    <!-- JS will append blocks here. I often manually add one example when debugging:
+                    <div class="work-item">
+                        <input placeholder="Company">
+                    </div>
+                    -->
+                </div>
+            </div>
+            <button type="button" id="add-work-exp-btn" class="btn btn-secondary" aria-controls="work-experience-container">Add Experience</button>
+
+            <!-- EDUCATION -->
+            <h3>Education</h3>
+            <div id="education-container">
+                <!-- JS-driven -->
+            </div>
+            <button type="button" id="add-education-btn" class="btn btn-secondary">Add Education</button>
+
+            <hr />
+
+            <!-- This submit goes to the template selection stage — left text same as original -->
+            <button type="submit" class="btn">Next: Choose Template</button>
+        </form>
+    </div>
+</section>
+
+<!-- TEMPLATES PAGE -->
+<section class="page" id="page-templates">
+    <div class="page-container">
+        <h2>Choose Your Template</h2>
+
+        <div class="template-selector">
+            <!-- Template option 1 -->
+            <div class="template-option" role="listitem">
+                <!-- Local path: kept as you had it. Note: absolute local paths won't work in production -->
+                <img src="C:\Users\Aryan\Pictures\Screenshots\TEMP-1.png" alt="Modern Template Preview" />
+                <button class="btn select-template-btn" data-template="template-1">
+                    <span>RESUME TEMPLATE-I</span>
+                </button>
+            </div>
+
+            <!-- Template option 2 -->
+            <div class="template-option" role="listitem">
+                <img src="C:\Users\Aryan\Pictures\Screenshots\EM.png" alt="Classic Template Preview" />
+                <button class="btn select-template-btn" data-template="template-2">RESUME TEMPLATE-II</button>
+            </div>
+
+            <!-- Template option 3  -->
+            <div class="template-option" role="listitem">
+                <img src="C:\Users\Aryan\Pictures\Screenshots\JEFF.png" alt="Creative Template Preview" />
+                <button class="btn select-template-btn" data-template="template-3">RESUME TEMPLATE-III</button>
+            </div>
+        </div>
+
+        <button id="back-to-form-btn" class="btn btn-secondary">EDIT FORM</button>
+    </div>
+</section>
+
+<!-- PREVIEW / DOWNLOAD PAGE -->
+<section class="page" id="page-preview">
+    <div class="page-container">
+        <div class="preview-controls">
+            <h2>Your Resume is Ready</h2>
+            <!-- kept ids so script.js can find them -->
+            <button id="download-pdf-btn" class="btn">Download as PDF</button>
+            <button id="back-to-templates-btn" class="btn btn-secondary">Change Template</button>
+        </div>
+        
+        <!-- resume wrapper holds all templates — we keep all three and show/hide with CSS or JS -->
+        <div class="resume-wrapper">
+
+            <!-- TEMPLATE 1 -->
+            <div id="template-1" class="resume-template" aria-hidden="true">
+                <header class="tpl1-header">
+                    <h1 id="tpl1-name-output"></h1>
+                    <h2 id="tpl1-jobtitle-output"></h2>
+                </header>
+
+                <div class="tpl1-content">
+                    <div class="tpl1-left">
+                        <section class="tpl1-section">
+                            <h3>Contact</h3>
+                            <p id="tpl1-phone-output"></p>
+                            <p id="tpl1-email-output"></p>
+                            <p id="tpl1-address-output"></p>
+                        </section>
+
+                        <section class="tpl1-section">
+                            <h3>Skills</h3>
+                            <ul id="tpl1-skills-output"></ul>
+                        </section>
+                    </div>
+
+                    <div class="tpl1-right">
+                        <img id="tpl1-photo-output" src="C:\Users\Aryan\Pictures\Screenshots\TEMP-1.png" alt="Profile Photo" />
+                        <section class="tpl1-section">
+                            <h3>Profile Summary</h3>
+                            <p id="tpl1-summary-output"></p>
+                        </section>
+
+                        <section class="tpl1-section">
+                            <h3>Work Experience</h3>
+                            <div id="tpl1-work-output"></div>
+                        </section>
+
+                        <section class="tpl1-section">
+                            <h3>Education</h3>
+                            <div id="tpl1-edu-output"></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEMPLATE 2 -->
+            <div id="template-2" class="resume-template" aria-hidden="true">
+                <div class="tpl2-container">
+                    <div class="tpl2-leftPanel">
+                        <img id="tpl2-photo-output" src="C:\Users\Aryan\Pictures\Screenshots\EM.png" alt="Profile Photo" />
+                        <section class="tpl2-section">
+                            <h3>Contact</h3>
+                            <p id="tpl2-phone-output"></p>
+                            <p id="tpl2-email-output"></p>
+                            <p id="tpl2-address-output"></p>
+                        </section>
+
+                        <section class="tpl2-section">
+                            <h3>Education</h3>
+                            <div id="tpl2-edu-output"></div>
+                        </section>
+
+                        <section class="tpl2-section">
+                            <h3>Skills</h3>
+                            <ul id="tpl2-skills-output"></ul>
+                        </section>
+                    </div>
+
+                    <div class="tpl2-rightPanel">
+                        <header>
+                            <h1 id="tpl2-name-output"></h1>
+                            <h2 id="tpl2-jobtitle-output"></h2>
+                        </header>
+
+                        <section class="tpl2-section">
+                            <h3>Profile Summary</h3>
+                            <p id="tpl2-summary-output"></p>
+                        </section>
+
+                        <section class="tpl2-section">
+                            <h3>Work Experience</h3>
+                            <div id="tpl2-work-output"></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEMPLATE 3 -->
+            <div id="template-3" class="resume-template" aria-hidden="true">
+                <header class="tpl3-header">
+                    <img id="tpl3-photo-output" src="C:\Users\Aryan\Pictures\Screenshots\JEFF.png" alt="Profile Photo" />
+                    <h1 id="tpl3-name-output"></h1>
+                    <h2 id="tpl3-jobtitle-output"></h2>
+                </header>
+
+                <div class="tpl3-contact-bar" role="navigation" aria-label="Contact info">
+                    <span id="tpl3-phone-output"></span>
+                    <span id="tpl3-email-output"></span>
+                    <span id="tpl3-address-output"></span>
+                </div>
+
+                <div class="tpl3-content">
+                    <div class="tpl3-column">
+                        <h3>Profile Summary</h3>
+                        <p id="tpl3-summary-output"></p>
+                        
+                        <h3>Skills</h3>
+                        <ul id="tpl3-skills-output"></ul>
+                    </div>
+
+                    <div class="tpl3-column">
+                        <h3>Work Experience</h3>
+                        <div id="tpl3-work-output"></div>
+
+                        <h3>Education</h3>
+                        <div id="tpl3-edu-output"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- end resume-wrapper -->
+    </div>
+</section>
+
+</body> </html>
