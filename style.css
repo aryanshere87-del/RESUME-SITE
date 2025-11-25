@@ -10,6 +10,7 @@
     --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -21,6 +22,11 @@ body {
     background-color: var(--light-gray);
     color: var(--text-color);
     line-height: 1.6;
+    background-image: url("https://img.freepik.com/free-photo/top-view-desk-concept-with-gray-background_23-2148236825.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
 }
 
 /* Page Navigation System */
@@ -91,6 +97,7 @@ hr {
 }
 
 /* Form Styles */
+
 #resume-form.form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
