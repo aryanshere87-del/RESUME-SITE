@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     education: [],
     photoDataUrl: ""
   };
+  
 
   function showPage(page) {
     [pageWelcome, pageForm, pageTemplates, pagePreview].forEach(p => p.classList.remove("active"));
@@ -147,9 +148,47 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(f);
   });
 
+  /**
+   * NEW: Validate that all form fields (text/email/tel inputs and textareas)
+   * inside #resume-form are filled (non-empty). We ignore file inputs, buttons, and disabled fields.
+   */
+  function isFormCompletelyFilled() {
+    // collect all inputs and textareas inside the form
+    const controls = Array.from(resumeForm.querySelectorAll("input, textarea, select"))
+      .filter(el => {
+        // exclude file inputs, buttons and elements that shouldn't be validated
+        if (el.type === "file" || el.type === "button" || el.type === "submit" || el.disabled) return false;
+        // ignore hidden inputs if any
+        if (el.type === "hidden") return false;
+        return true;
+      });
+
+    // Check each control has a non-empty value
+    for (const c of controls) {
+      // For select elements ensure a value is chosen
+      if (c.tagName.toLowerCase() === "select") {
+        if (!String(c.value || "").trim()) return false;
+      } else {
+        if (!String(c.value || "").trim()) return false;
+      }
+    }
+
+    return true;
+  }
+
   resumeForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Validation: require every non-file input/textarea/select to be filled
+    if (!isFormCompletelyFilled()) {
+      alert("Please fill all details!");
+      return; // stop submission
+    }
+
+    // If we get here all fields are filled
+    alert("All details submitted successfully!");
+
+    // Collect form data as before
     resumeData.fullName = document.getElementById("fullName").value.trim();
     resumeData.jobTitle = document.getElementById("jobTitle").value.trim();
     resumeData.email = document.getElementById("email").value.trim();
